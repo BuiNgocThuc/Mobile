@@ -1,18 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<TableLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_margin="15px"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <TableRow>
+        <TextView
+            android:text="THÔNG TIN BỔ SUNG"
+            android:textColor="#FFFFFF"
+            android:background="#d81c61"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </TextView>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Họ và tên:"
+            ></TextView>
+        <EditText
+            android:text="Name"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            ></EditText>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="CMND:"
+            ></TextView>
+        <EditText
+            android:text="Name"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            ></EditText>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Bằng cấp"
+            android:textColor="#FFFFFF"
+            android:background="#d81c61"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </TextView>
+    </TableRow>
+    <TableRow>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <RadioButton
+                android:id="@+id/rdTrcap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:text="Trung cấp">
+            </RadioButton>
+            <RadioButton
+                android:id="@+id/rdCaodang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:text="Cao đẳng">
+            </RadioButton>
+            <RadioButton
+                android:id="@+id/rdDaihoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:text="Đại học">
+            </RadioButton>
+        </LinearLayout>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Sở thích"
+            android:background="#d81c61"
+            android:textColor="#FFFFFF"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </TextView>
+    </TableRow>
+    <TableRow>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <RadioButton
+                android:id="@+id/rdDocbao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:text="Đọc báo">
+            </RadioButton>
+            <RadioButton
+                android:id="@+id/rdDocsach"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:text="Đọc sách">
+            </RadioButton>
+            <RadioButton
+                android:id="@+id/rdDoccode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:text="Đoc code">
+            </RadioButton>
+        </LinearLayout>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Bổ sung"
+            android:background="#d81c61"
+            android:textColor="#FFFFFF"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </TextView>
+    </TableRow>
+    <TableRow>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </EditText>
+    </TableRow>
+    <TableRow>
+        <Button
+            android:id="@+id/btGui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Gửi đi"
+            android:textAlignment="center"
+            ></Button>
+    </TableRow>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</TableLayout>
