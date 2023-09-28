@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="15px"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TableRow>
+        <TextView
+            android:text="THÔNG TIN BỔ SUNG"
+            android:textColor="#FFFFFF"
+            android:background="#d81c61"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </TextView>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Họ và tên:"
+            ></TextView>
+
+        <EditText
+            android:id="@+id/edtHoTen"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Họ tên">
+
+        </EditText>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="CMND:"
+            ></TextView>
+
+        <EditText
+            android:id="@+id/edtCMND"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="CMND">
+            >
+        </EditText>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Bằng cấp"
+            android:textColor="#FFFFFF"
+            android:background="#d81c61"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </TextView>
+    </TableRow>
+    <TableRow>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+
+            <RadioGroup
+                android:id="@+id/grTrinhDo"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rdTrcap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Trung cấp"></RadioButton>
+
+                <RadioButton
+                    android:id="@+id/rdCaodang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cao đẳng"></RadioButton>
+
+                <RadioButton
+                    android:id="@+id/rdDaihoc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Đại học"></RadioButton>
+
+            </RadioGroup>
+
+        </LinearLayout>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Sở thích"
+            android:background="#d81c61"
+            android:textColor="#FFFFFF"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </TextView>
+    </TableRow>
+    <TableRow>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+
+            <RadioGroup
+                android:id="@+id/grSothich"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rdDocbao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_weight="1"
+                    android:text="Đọc báo"></RadioButton>
+
+                <RadioButton
+                    android:id="@+id/rdDocsach"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_weight="1"
+                    android:text="Đọc sách"></RadioButton>
+
+                <RadioButton
+                    android:id="@+id/rdDoccode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_weight="1"
+                    android:text="Đoc code"></RadioButton>
+            </RadioGroup>
+
+        </LinearLayout>
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:text="Bổ sung"
+            android:background="#d81c61"
+            android:textColor="#FFFFFF"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </TextView>
+    </TableRow>
+    <TableRow>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </EditText>
+    </TableRow>
+    <TableRow>
+        <Button
+            android:id="@+id/btGui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Gửi đi"
+            android:textAlignment="center"
+            ></Button>
+    </TableRow>
+
+</TableLayout>
