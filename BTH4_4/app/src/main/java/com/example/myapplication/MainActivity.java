@@ -5,22 +5,28 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 public class MainActivity extends AppCompatActivity {
-    Button btnscan;
+    Button btnScan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnscan = findViewById(R.id.btnQRScan);
-        btnscan.setOnClickListener(view -> {
-            IntentIntegrator intentIntegrator = new IntentIntegrator(MainActivity.this);
-            intentIntegrator.setOrientationLocked(true);
+        initViews();
+    }
+
+    private void initViews() {
+        btnScan = findViewById(R.id.btnQRScan);
+        btnScan.setOnClickListener(view -> {
+            IntentIntegrator intentIntegrator = new IntentIntegrator(this);
+            intentIntegrator.setOrientationLocked(false);
             intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
             intentIntegrator.initiateScan();
         });
@@ -36,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 String scannedData = result.getContents();
                 if (scannedData.startsWith("http://") || scannedData.startsWith("https://")) {
-                    openWebandImage(scannedData);
+                    openWebAndImage(scannedData);
                 } else if (scannedData.startsWith("image:")) {
-                    openWebandImage(scannedData);
+                    openWebAndImage(scannedData);
                 }else if(scannedData.startsWith("MATMSG:")){
                     openEmailApp2(scannedData);
                 }else if (scannedData.startsWith("MAILTO:")) {
@@ -52,11 +58,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    private void openWebandImage(String url) {
+
+
+    private void openWebAndImage(String url) {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW,uri);
         startActivity(intent);
     }
+
+    // open email without subject or context
     private void openEmailApp1(String input) {
         String email = null;
         int emailStart = input.indexOf("MAILTO:")+7;
@@ -68,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // open email have title and context
     private void openEmailApp2(String input){
         String email = null;
         String subject = null;
@@ -103,10 +114,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(emailIntent);
         }
     }
-    private void openSmsApp(String phonenum) {
-        //Toast.makeText(this,phonenum,Toast.LENGTH_SHORT).show();
-        String phonenumfix = phonenum.replaceAll("[^0-9]", "");
-        Uri uri = Uri.parse("smsto:"+ phonenumfix);
+
+
+    private void openSmsApp(String phoneNum) {
+        //Toast.makeText(this,phoneNum,Toast.LENGTH_SHORT).show();
+        String phoneNumFix = phoneNum.replaceAll("[^0-9]", "");
+        Uri uri = Uri.parse("smsto:"+ phoneNumFix);
         Intent smsIntent = new Intent(Intent.ACTION_SENDTO,uri);
         startActivity(smsIntent);
     }
