@@ -22,6 +22,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     private Context context;
     private ArrayList<Song> album;
 
+    private SongViewHolder currentPlayingViewHolder;
     private boolean played = false;
 
 
@@ -60,6 +61,16 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         holder.tvNameAuthor.setText(song.getAuthor());
         holder.tvNameSong.setText(song.getNameSong());
         holder.setUrl(song.getUrl());
+        holder.btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (currentPlayingViewHolder != null) {
+                    currentPlayingViewHolder.Stop();
+                }
+                holder.Play();
+                currentPlayingViewHolder = holder;
+            }
+        });
     }
 
     @Override
@@ -119,41 +130,58 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
         public void Play() {
             if (played == true) {
-                Stop();
-            }
-            player = MediaPlayer.create(getContext(), getUrl());
-            player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
+                if (this != currentPlayingViewHolder) {
                     Stop();
                 }
-            });
+            }
+            if (this != currentPlayingViewHolder) {
+                player = MediaPlayer.create(getContext(), getUrl());
+                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        Stop();
+                    }
+                });
+            }
             player.start();
             rotateAnimation();
             played = true;
             btnPause.setVisibility(View.VISIBLE);
             btnPlay.setVisibility(View.INVISIBLE);
-
+            currentPlayingViewHolder = this;
         }
 
         public void Pause() {
-            if (player != null) {
-                player.pause();
-                played = false;
-                btnPause.setVisibility(View.INVISIBLE);
-                btnPlay.setVisibility(View.VISIBLE);
-                imgSong.clearAnimation();
+            if (played) {
+                if (this == currentPlayingViewHolder) {
+                    if (player.isPlaying()) {
+                        player.pause();
+                        played = false;
+                        btnPause.setVisibility(View.INVISIBLE);
+                        btnPlay.setVisibility(View.VISIBLE);
+                        imgSong.clearAnimation();
+                    } else {
+                        player.start();
+                        played = true;
+                        btnPause.setVisibility(View.VISIBLE);
+                        btnPlay.setVisibility(View.INVISIBLE);
+                        rotateAnimation();
+                    }
+                }
             }
         }
 
         public void Stop() {
-            if (player != null) {
-                player.release();
-                player = null;
-                played = false;
-                btnPause.setVisibility(View.INVISIBLE);
-                btnPlay.setVisibility(View.VISIBLE);
-                imgSong.clearAnimation();
+            if (played) {
+                if (this == currentPlayingViewHolder) {
+                    player.release();
+                    player = null;
+                    played = false;
+                    btnPause.setVisibility(View.INVISIBLE);
+                    btnPlay.setVisibility(View.VISIBLE);
+                    imgSong.clearAnimation();
+                    currentPlayingViewHolder = null;
+                }
             }
         }
 
