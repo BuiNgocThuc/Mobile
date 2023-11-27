@@ -11,6 +11,10 @@ import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.example.modernartui.Fragment.LinearLayoutFragment;
+import com.example.modernartui.Fragment.RelativeLayoutFragment;
+import com.example.modernartui.Fragment.TableLayoutFragment;
+
 public class MainActivity extends AppCompatActivity {
     private SeekBar colorSeekBar;
 
