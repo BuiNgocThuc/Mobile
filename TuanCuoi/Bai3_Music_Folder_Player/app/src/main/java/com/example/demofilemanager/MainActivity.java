@@ -1,10 +1,14 @@
 package com.example.demofilemanager;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,8 +16,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Process;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +31,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class MainActivity extends AppCompatActivity implements ItemClickListener {
+public class MainActivity extends AppCompatActivity implements ItemClickListener, PlayerFragment.setDataChanged {
 
     Button btnExit, btnSelect, btnBack;
     RecyclerView rcFiles;
@@ -33,10 +40,12 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
     public static final int REQUEST_CODE = 1;
 
     static Stack<String> pathStack = new Stack<>();
+    static MediaPlayer mediaPlayer = new MediaPlayer();
 
-    public static final String MUSIC_LAST_PLAYED = "LAST_PLAYED";
-    public static final String MUSIC_FILE = "STORED_MUSIC";
-    public static boolean SHOW_MINI_PLAYER = false;
+    int position;
+    ArrayList<File> musicFiles = new ArrayList<>();
+
+    public static boolean IS_STOPPED = false;
     public static String PATH_TO_FRAG = null;
     FileAdapter files;
 
@@ -47,23 +56,50 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
 
         initViews();
         permission();
+        getIntentMethod();
         solveEvent();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        SharedPreferences preferences = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE);
+    private void getIntentMethod() {
+        Intent backIntent = getIntent();
+        if(backIntent.hasExtra("currentPosition")){
+            position = (int) backIntent.getSerializableExtra("currentPosition");
+            musicFiles = (ArrayList) backIntent.getSerializableExtra("songsList");
+            boolean isStopped = (boolean) backIntent.getSerializableExtra("SongStopped");
+            String path = musicFiles.get(position).getPath();
+            createPathFolder();
+            createPlayerThumbnail(path, isStopped);
 
-        String value = preferences.getString(MUSIC_FILE, null);
-        if(value != null) {
-            SHOW_MINI_PLAYER = true;
-            PATH_TO_FRAG = value;
-        } else {
-            SHOW_MINI_PLAYER = false;
-            PATH_TO_FRAG = null;
         }
+
     }
+
+    private void createPathFolder() {
+        String currentPath = pathStack.peek();
+        File previousFolder = new File(currentPath);
+        File[] filesAndFolders = previousFolder.listFiles();
+        for (int i = 0; i < filesAndFolders.length; i++) {
+            if(filesAndFolders[i].getName().equals(musicFiles.get(position).getName())){
+                FileAdapter.selectedItem = i;
+                files.notifyDataSetChanged();
+                break;
+            }
+        }
+        files.setData(filesAndFolders);
+        changePath(currentPath);
+    }
+
+    private void createPlayerThumbnail(String path, boolean isStopped) {
+        PATH_TO_FRAG = path;
+        IS_STOPPED = isStopped;
+        FragmentManager fragmentManager = getSupportFragmentManager(); // Sử dụng getSupportFragmentManager() nếu bạn đang sử dụng Support Library
+        PlayerFragment fragment = new PlayerFragment();
+        fragment.setDataChangedListener(this);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.frag_bottom, fragment, "CURRENT_SONG");
+        transaction.commit();
+    }
+
 
     private void permission() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -117,12 +153,9 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
                 if(musicFiles.size() == 0) {
                     Toast.makeText(MainActivity.this, "Không có file nhạc", Toast.LENGTH_SHORT).show();
                 } else {
-                    String[] songs = new String[musicFiles.size()];
-                    for(int i = 0; i < musicFiles.size(); ++i){
-                        songs[i] = musicFiles.get(i).getName();
-                    }
+                    int position = 0;
                     startActivity(new Intent(MainActivity.this, PlayerActivity.class)
-                            .putExtra("songsList", musicFiles));
+                            .putExtra("songsList", musicFiles).putExtra("position", position));
                 }
             }
         });
@@ -130,7 +163,13 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         btnExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.stop();
+                }
+//                moveTaskToBack(true);
+//                finish();
+                finishAffinity();
+
             }
         });
     }
@@ -175,6 +214,8 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
 
         tvPath = findViewById(R.id.tvPath);
         tvNoFiles = findViewById(R.id.tvNoFile);
+
+        mediaPlayer = PlayerActivity.mediaPlayer;
     }
 
     @Override
@@ -186,5 +227,32 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
         } else {
             tvNoFiles.setVisibility(View.INVISIBLE);
         }
+    }
+
+    @Override
+    public void destroyFragment() {
+        Fragment fm = getSupportFragmentManager().findFragmentByTag("CURRENT_SONG");
+        if(fm != null) {
+            getSupportFragmentManager().beginTransaction().remove(fm).commit();
+        }
+        PlayerActivity.mediaPlayer.stop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Process.killProcess(Process.myPid());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        changeDataAdapter();
+    }
+
+    @Override
+    public void changeDataAdapter() {
+        files.notifyDataSetChanged();
     }
 }

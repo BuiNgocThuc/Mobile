@@ -68,10 +68,6 @@
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"
         android:id="@+id/frag_bottom">
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="com.example.demofilemanager.PlayerFragment" />
     </FrameLayout>
 
 </RelativeLayout>

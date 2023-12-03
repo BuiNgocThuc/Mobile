@@ -24,4 +24,15 @@
         android:layout_marginStart="20dp"
         android:textColor="@color/black"/>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/stopbtn"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/stop"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="15sp"
+        android:visibility="invisible"/>
+
+
 </RelativeLayout>

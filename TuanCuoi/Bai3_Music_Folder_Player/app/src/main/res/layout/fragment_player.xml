@@ -31,7 +31,8 @@
             android:layout_toEndOf="@+id/img_bottom"
             android:gravity="center"
             android:text="Song Name"
-            android:textSize="18dp" />
+            android:textSize="18dp"
+            android:scrollHorizontally="false"/>
 
         <ImageView
             android:id="@+id/skip_previous_bottom"

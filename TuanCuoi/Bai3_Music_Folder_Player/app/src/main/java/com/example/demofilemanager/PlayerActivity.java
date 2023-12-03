@@ -1,13 +1,18 @@
 package com.example.demofilemanager;
 
+import static com.example.demofilemanager.MainActivity.PATH_TO_FRAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -29,14 +34,13 @@ public class PlayerActivity extends AppCompatActivity {
     SeekBar seekbar;
     Uri uri;
     Bundle songsExtraData;
-    static MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
     private Handler handler = new Handler();
     ArrayList<File> listSongsPlay;
-    static int position = 0;
+    static int position;
     private Thread playThread, prevThread, nextThread;
 
-    public static final String MUSIC_LAST_PLAYED = "LAST_PLAYED";
-    public static final String MUSIC_FILE = "STORED_MUSIC";
+    public static int TRANS_SONG = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +52,12 @@ public class PlayerActivity extends AppCompatActivity {
         solveEvent();
     }
 
+
+
     private void getIntentMethod() {
-        songsExtraData = getIntent().getExtras();
-        listSongsPlay = (ArrayList) songsExtraData.getParcelableArrayList("songsList");
+        Intent songsExtraData = getIntent();
+        listSongsPlay = (ArrayList) songsExtraData.getSerializableExtra("songsList");
+        position = (int) songsExtraData.getSerializableExtra("position");
         if (listSongsPlay != null) {
             btnPlay_Pause.setImageResource(R.drawable.pause_circle);
             uri = Uri.parse(listSongsPlay.get(position).getAbsolutePath());
@@ -139,6 +146,7 @@ public class PlayerActivity extends AppCompatActivity {
                     duration_played.setText(formattedTime(mCurrentPosition));
                     if (mCurrentPosition == getDuration(uri) / 1000) {
                         nextSong();
+                        FileAdapter.selectedItem++;
                     }
                 }
                 handler.postDelayed(this, 1000);
@@ -148,9 +156,15 @@ public class PlayerActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uri = Uri.parse(listSongsPlay.get(position).getAbsolutePath());
-                shareData(uri);
-                moveTaskToBack(true);
+                Intent backIntent = new Intent(getApplicationContext(), MainActivity.class);
+                backIntent.putExtra("currentPosition", position);
+                backIntent.putExtra("songsList", listSongsPlay);
+                if(mediaPlayer.isPlaying()) {
+                    backIntent.putExtra("SongStopped", false);
+                } else {
+                    backIntent.putExtra("SongStopped", true);
+                }
+                startActivity(backIntent);
             }
         });
     }
@@ -160,7 +174,29 @@ public class PlayerActivity extends AppCompatActivity {
         playThreadBtn();
         nextThreadBtn();
         prevThreadBtn();
+        transSongFromMinimize();
         super.onResume();
+    }
+
+    public void transSongFromMinimize() {
+        if (TRANS_SONG != 0) {
+            position = TRANS_SONG;
+            uri = Uri.parse(PATH_TO_FRAG);
+            metaData(uri);
+            installSeekBar();
+            btnPlay_Pause.setImageResource(R.drawable.pause_circle);
+            hidePrev_NextSong(position);
+            rotateAnimation();
+            TRANS_SONG = 0;
+        }
+
+        if (!mediaPlayer.isPlaying()) {
+            btnPlay_Pause.setImageResource(R.drawable.play_circle);
+            cover_art.clearAnimation();
+        } else {
+            btnPlay_Pause.setImageResource(R.drawable.pause_circle);
+            cover_art.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate));
+        }
     }
 
     private void prevThreadBtn() {
@@ -268,13 +304,13 @@ public class PlayerActivity extends AppCompatActivity {
         if (mediaPlayer.isPlaying()) {
             btnPlay_Pause.setImageResource(R.drawable.play_circle);
             mediaPlayer.pause();
-            installSeekBar();
+            //installSeekBar();
             cover_art.clearAnimation();
         } else {
             btnPlay_Pause.setImageResource(R.drawable.pause_circle);
             mediaPlayer.start();
             cover_art.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate));
-            installSeekBar();
+            //installSeekBar();
         }
 
     }
@@ -282,13 +318,6 @@ public class PlayerActivity extends AppCompatActivity {
     public void rotateAnimation() {
         Animation ani = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
         cover_art.setAnimation(ani);
-    }
-
-    private void shareData(Uri uri) {
-        SharedPreferences.Editor editor = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
-                .edit();
-        editor.putString(MUSIC_FILE, uri.toString());
-        editor.apply();
     }
 
     private String formattedTime(int mCurrentPosition) {

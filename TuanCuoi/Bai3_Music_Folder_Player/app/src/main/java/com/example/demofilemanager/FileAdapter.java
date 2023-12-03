@@ -17,12 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Stack;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
@@ -30,6 +32,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     Context context;
     File[] filesAndFolders;
     private ItemClickListener itemClickListener;
+    static int selectedItem = -1;
 
     @NonNull
     @Override
@@ -55,12 +58,19 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         this.itemClickListener = itemClickListener;
     }
 
+    public void checkSelectedItem(File selectItem, int position) {
+
+    }
 
     @Override
     public void onBindViewHolder(@NonNull FileViewHolder holder, @SuppressLint("RecyclerView") int position) {
         File selectedFile = filesAndFolders[position];
+        if(selectedItem != position || !selectedFile.getName().toLowerCase().endsWith(".mp3")) {
+            holder.btnStop.setVisibility(View.GONE);
+        } else {
+            holder.btnStop.setVisibility(View.VISIBLE);
+        }
         holder.tvTitleFile.setText(selectedFile.getName());
-
         if (selectedFile.isDirectory()) {
             holder.imgFile.setImageResource(R.drawable.folder);
         } else {
@@ -94,10 +104,39 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                     if (itemClickListener != null) {
                         itemClickListener.onItemClickGetPath(path);
                     }
-
+                }else if(selectedFile.getName().toLowerCase().endsWith(".mp3")){
+                    selectedItem = position;
+                    notifyDataSetChanged();
+                    ArrayList<File> musicFiles = getMusicFiles(filesAndFolders);
+                    Intent intent = new Intent(context, PlayerActivity.class);
+                    intent.putExtra("songsList", musicFiles);
+                    intent.putExtra("position", musicFiles.indexOf(selectedFile));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
                 }
             }
         });
+
+        holder.btnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(itemClickListener != null) {
+                    itemClickListener.destroyFragment();
+                }
+                selectedItem = -1;
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    private ArrayList<File> getMusicFiles(File[] files){
+        ArrayList<File> musicFiles = new ArrayList<>();
+        for(File currentFile : files) {
+            if(currentFile.getName().toLowerCase().endsWith(".mp3")) {
+                musicFiles.add(currentFile);
+            }
+        }
+        return musicFiles;
     }
 
 
@@ -109,7 +148,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     public class FileViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvTitleFile;
-        ImageView imgFile;
+        ImageView imgFile, btnStop;
 
         RelativeLayout layout;
 
@@ -117,6 +156,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
             super(itemView);
             tvTitleFile = itemView.findViewById(R.id.titleFile);
             imgFile = itemView.findViewById(R.id.imgFile);
+            btnStop = itemView.findViewById(R.id.stopbtn);
             layout = itemView.findViewById(R.id.layout_item);
         }
     }
