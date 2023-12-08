@@ -52,8 +52,6 @@ public class PlayerActivity extends AppCompatActivity {
         solveEvent();
     }
 
-
-
     private void getIntentMethod() {
         Intent songsExtraData = getIntent();
         listSongsPlay = (ArrayList) songsExtraData.getSerializableExtra("songsList");
@@ -200,19 +198,26 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void prevThreadBtn() {
-        prevThread = new Thread() {
+//        prevThread = new Thread() {
+//            @Override
+//            public void run() {
+//                super.run();
+//                btnPrev.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        prevSong();
+//                    }
+//                });
+//            }
+//        };
+//        prevThread.start();
+
+        btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                super.run();
-                btnPrev.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        prevSong();
-                    }
-                });
+            public void onClick(View view) {
+                prevSong();
             }
-        };
-        prevThread.start();
+        });
     }
 
     private void prevSong() {
@@ -230,19 +235,26 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void nextThreadBtn() {
-        nextThread = new Thread() {
+//        nextThread = new Thread() {
+//            @Override
+//            public void run() {
+//                super.run();
+//                btnNext.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        nextSong();
+//                    }
+//                });
+//            }
+//        };
+//        nextThread.start();
+
+        btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                super.run();
-                btnNext.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        nextSong();
-                    }
-                });
+            public void onClick(View view) {
+                nextSong();
             }
-        };
-        nextThread.start();
+        });
     }
 
     private void nextSong() {
@@ -271,19 +283,26 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void playThreadBtn() {
-        playThread = new Thread() {
+//        playThread = new Thread() {
+//            @Override
+//            public void run() {
+//                super.run();
+//                btnPlay_Pause.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Play_Pause();
+//                    }
+//                });
+//            }
+//        };
+//        playThread.start();
+
+        btnPlay_Pause.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                super.run();
-                btnPlay_Pause.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Play_Pause();
-                    }
-                });
+            public void onClick(View view) {
+                Play_Pause();
             }
-        };
-        playThread.start();
+        });
     }
 
     void installSeekBar() {

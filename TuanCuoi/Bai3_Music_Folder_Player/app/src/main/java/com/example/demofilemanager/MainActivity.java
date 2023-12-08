@@ -166,10 +166,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickListener
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.stop();
                 }
-//                moveTaskToBack(true);
-//                finish();
                 finishAffinity();
-
             }
         });
     }
